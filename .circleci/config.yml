@@ -176,6 +176,7 @@ jobs:
   test-browser:
     docker:
       - image: circleci/node:current-browsers
+    resource_class: small
     steps:
       - checkout
       - install-and-build
