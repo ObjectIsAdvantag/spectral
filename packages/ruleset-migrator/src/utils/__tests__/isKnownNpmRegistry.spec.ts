@@ -1,7 +1,7 @@
 import { isKnownNpmRegistry } from '../isKnownNpmRegistry';
 
 describe('isKnownNmRegistry util', () => {
-  it.each([
+  it.concurrent.each([
     'https://unpkg.com/spectral-aws-apigateway-ruleset',
     'https://unpkg.com/spectral-aws-apigateway-ruleset/functions/draft4.js',
     'https://cdn.skypack.dev/@stoplight/spectral-core',
@@ -9,7 +9,7 @@ describe('isKnownNmRegistry util', () => {
     expect(isKnownNpmRegistry(input)).toBe(true);
   });
 
-  it.each([
+  it.concurrent.each([
     'ftp://unpkg.com/spectral-aws-apigateway-ruleset',
     '/nimma/legacy',
     'https://baz.unpkg.com/spectral-aws-apigateway-ruleset',

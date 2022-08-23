@@ -1,7 +1,7 @@
 import { isPackageImport } from '../isPackageImport';
 
 describe('isPackageImport util', () => {
-  it.each([
+  it.concurrent.each([
     'nimma/legacy',
     'nimma',
     'lodash',
@@ -14,7 +14,7 @@ describe('isPackageImport util', () => {
     expect(isPackageImport(input)).toBe(true);
   });
 
-  it.each(['', 'spectral:oas', '/nimma/legacy', 'path', 'https://cdn.skypack.dev/@stoplight/spectral-core'])(
+  it.concurrent.each(['', 'spectral:oas', '/nimma/legacy', 'path', 'https://cdn.skypack.dev/@stoplight/spectral-core'])(
     'given invalid %s import, should return false',
     input => {
       expect(isPackageImport(input)).toBe(false);
