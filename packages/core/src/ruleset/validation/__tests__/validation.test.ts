@@ -16,28 +16,28 @@ function truthy() {
 }
 
 describe('JS Ruleset Validation', () => {
-  it('given primitive type, throws', () => {
+  it.concurrent('given primitive type, throws', () => {
     expect(assertValidRuleset.bind(null, null)).toThrow('Provided ruleset is not an object');
     expect(assertValidRuleset.bind(null, 2)).toThrow('Provided ruleset is not an object');
     expect(assertValidRuleset.bind(null, 'true')).toThrow('Provided ruleset is not an object');
   });
 
-  it('given object with no rules and no extends properties, throws', () => {
+  it.concurrent('given object with no rules and no extends properties, throws', () => {
     expect(assertValidRuleset.bind(null, {})).toThrow('Ruleset must have rules or extends or overrides defined');
     expect(assertValidRuleset.bind(null, { rule: {} })).toThrow(
       'Ruleset must have rules or extends or overrides defined',
     );
   });
 
-  it('given object with extends property only, emits no errors', () => {
+  it.concurrent('given object with extends property only, emits no errors', () => {
     expect(assertValidRuleset.bind(null, { extends: [] })).not.toThrow();
   });
 
-  it('given object with rules property only, emits no errors', () => {
+  it.concurrent('given object with rules property only, emits no errors', () => {
     expect(assertValidRuleset.bind(null, { rules: {} })).not.toThrow();
   });
 
-  it('given invalid ruleset, throws', () => {
+  it.concurrent('given invalid ruleset, throws', () => {
     expect(assertValidRuleset.bind(null, invalidRuleset)).toThrowAggregateError(
       new AggregateError([
         new RulesetValidationError('the rule must have at least "given" and "then" properties', [
@@ -58,11 +58,11 @@ describe('JS Ruleset Validation', () => {
     );
   });
 
-  it('given valid ruleset should, emits no errors', () => {
+  it.concurrent('given valid ruleset should, emits no errors', () => {
     expect(assertValidRuleset.bind(null, validRuleset)).not.toThrow();
   });
 
-  it.each([false, 2, null, 'foo', '12.foo.com'])(
+  it.concurrent.each([false, 2, null, 'foo', '12.foo.com'])(
     'given invalid %s documentationUrl in a rule, throws',
     documentationUrl => {
       expect(assertValidRuleset.bind(null, { documentationUrl, rules: {} })).toThrowAggregateError(
@@ -87,7 +87,7 @@ describe('JS Ruleset Validation', () => {
     },
   );
 
-  it('recognizes valid documentationUrl', () => {
+  it.concurrent('recognizes valid documentationUrl', () => {
     expect(
       assertValidRuleset.bind(null, {
         documentationUrl: 'https://stoplight.io/p/docs/gh/stoplightio/spectral/docs/reference/openapi-rules.md',
@@ -110,7 +110,7 @@ describe('JS Ruleset Validation', () => {
     ).not.toThrow();
   });
 
-  it.each(['error', 'warn', 'info', 'hint', 'off'])('recognizes human-readable %s severity', severity => {
+  it.concurrent.each(['error', 'warn', 'info', 'hint', 'off'])('recognizes human-readable %s severity', severity => {
     expect(
       assertValidRuleset.bind(null, {
         rules: {
@@ -134,7 +134,7 @@ describe('JS Ruleset Validation', () => {
     ).not.toThrow();
   });
 
-  it('recognizes valid array-ish extends syntax', () => {
+  it.concurrent('recognizes valid array-ish extends syntax', () => {
     const rulesetA = {
       rules: {},
     };
@@ -151,7 +151,7 @@ describe('JS Ruleset Validation', () => {
     ).not.toThrow();
   });
 
-  it.each<[unknown, RulesetValidationError[]]>([
+  it.concurrent.each<[unknown, RulesetValidationError[]]>([
     [
       [[{ rules: {} }, 'test']],
       [new RulesetValidationError('allowed types are "off", "recommended" and "all"', ['extends', '0', '1'])],
@@ -171,7 +171,7 @@ describe('JS Ruleset Validation', () => {
     ).toThrowAggregateError(new AggregateError(errors));
   });
 
-  it('recognizes valid ruleset formats syntax', () => {
+  it.concurrent('recognizes valid ruleset formats syntax', () => {
     expect(
       assertValidRuleset.bind(null, {
         formats: [formatB],
@@ -180,7 +180,7 @@ describe('JS Ruleset Validation', () => {
     ).not.toThrow();
   });
 
-  it.each([
+  it.concurrent.each([
     [
       [2, 'a'],
       new AggregateError([
@@ -199,7 +199,7 @@ describe('JS Ruleset Validation', () => {
     ).toThrowAggregateError(error);
   });
 
-  it('recognizes valid rule formats syntax', () => {
+  it.concurrent('recognizes valid rule formats syntax', () => {
     expect(
       assertValidRuleset.bind(null, {
         formats: [formatB],
@@ -216,7 +216,7 @@ describe('JS Ruleset Validation', () => {
     ).not.toThrow();
   });
 
-  it.each([
+  it.concurrent.each([
     [
       [2, 'a'],
       new AggregateError([
@@ -242,7 +242,7 @@ describe('JS Ruleset Validation', () => {
   });
 
   describe('overrides validation', () => {
-    it('given an invalid overrides, throws', () => {
+    it.concurrent('given an invalid overrides, throws', () => {
       expect(
         assertValidRuleset.bind(null, {
           overrides: null,
@@ -250,7 +250,7 @@ describe('JS Ruleset Validation', () => {
       ).toThrowAggregateError(new AggregateError([new RulesetValidationError('must be array', ['overrides'])]));
     });
 
-    it('given an empty overrides, throws', () => {
+    it.concurrent('given an empty overrides, throws', () => {
       expect(
         assertValidRuleset.bind(null, {
           overrides: [],
@@ -258,7 +258,7 @@ describe('JS Ruleset Validation', () => {
       ).toThrowAggregateError(new AggregateError([new RulesetValidationError('must not be empty', ['overrides'])]));
     });
 
-    it('given an invalid pattern, throws', () => {
+    it.concurrent('given an invalid pattern, throws', () => {
       expect(
         assertValidRuleset.bind(null, {
           overrides: [2],
@@ -278,7 +278,7 @@ describe('JS Ruleset Validation', () => {
         rules: {},
       };
 
-      it.each<[Partial<RulesetDefinition>, RulesetValidationError]>([
+      it.concurrent.each<[Partial<RulesetDefinition>, RulesetValidationError]>([
         [
           { extends: [rulesetA] },
           new RulesetValidationError('must contain rules when JSON Pointers are defined', ['overrides', '0']),
@@ -330,7 +330,7 @@ describe('JS Ruleset Validation', () => {
         ).toThrowAggregateError(new AggregateError([error]));
       });
 
-      it.each<RulesetOverridesDefinition>([
+      it.concurrent.each<RulesetOverridesDefinition>([
         [
           {
             files: ['*.json#'],
@@ -356,7 +356,7 @@ describe('JS Ruleset Validation', () => {
   });
 
   describe('aliases validation', () => {
-    it.each(['Info', 'Info-Description', 'Info_Description', 'Response404', 'errorMessage'])(
+    it.concurrent.each(['Info', 'Info-Description', 'Info_Description', 'Response404', 'errorMessage'])(
       'recognizes %s as a valid key of an alias',
       alias => {
         expect(
@@ -370,18 +370,21 @@ describe('JS Ruleset Validation', () => {
       },
     );
 
-    it.each(['#Info', '#i', '#Info.contact', '#Info[*]'])('recognizes %s as a valid value of an alias', value => {
-      expect(
-        assertValidRuleset.bind(null, {
-          rules: {},
-          aliases: {
-            alias: [value],
-          },
-        }),
-      ).not.toThrow();
-    });
+    it.concurrent.each(['#Info', '#i', '#Info.contact', '#Info[*]'])(
+      'recognizes %s as a valid value of an alias',
+      value => {
+        expect(
+          assertValidRuleset.bind(null, {
+            rules: {},
+            aliases: {
+              alias: [value],
+            },
+          }),
+        ).not.toThrow();
+      },
+    );
 
-    it('given an invalid aliases, throws', () => {
+    it.concurrent('given an invalid aliases, throws', () => {
       expect(
         assertValidRuleset.bind(null, {
           rules: {},
@@ -390,7 +393,7 @@ describe('JS Ruleset Validation', () => {
       ).toThrowAggregateError(new AggregateError([new RulesetValidationError('must be object', ['aliases'])]));
     });
 
-    it.each([null, 5])('recognizes %p as an invalid type of aliases', value => {
+    it.concurrent.each([null, 5])('recognizes %p as an invalid type of aliases', value => {
       expect(
         assertValidRuleset.bind(null, {
           rules: {},
@@ -408,7 +411,7 @@ describe('JS Ruleset Validation', () => {
       );
     });
 
-    it.each(['$', '#', '$bar', '9a', 'test!'])('given %s keyword used as a key of an alias, throws', key => {
+    it.concurrent.each(['$', '#', '$bar', '9a', 'test!'])('given %s keyword used as a key of an alias, throws', key => {
       expect(
         assertValidRuleset.bind(null, {
           rules: {},
@@ -426,7 +429,7 @@ describe('JS Ruleset Validation', () => {
       );
     });
 
-    it.each<[unknown[], RulesetValidationError[]]>([
+    it.concurrent.each<[unknown[], RulesetValidationError[]]>([
       [
         [''],
         [
@@ -467,7 +470,7 @@ describe('JS Ruleset Validation', () => {
     });
 
     describe('given scoped aliases', () => {
-      it('demands targets to be present', () => {
+      it.concurrent('demands targets to be present', () => {
         expect(
           assertValidRuleset.bind(null, {
             rules: {},
@@ -485,7 +488,7 @@ describe('JS Ruleset Validation', () => {
         );
       });
 
-      it.each(['Info', 'Info-Description', 'Info_Description', 'Response404', 'errorMessage'])(
+      it.concurrent.each(['Info', 'Info-Description', 'Info_Description', 'Response404', 'errorMessage'])(
         'recognizes %s as a valid key of an alias',
         alias => {
           expect(
@@ -506,25 +509,28 @@ describe('JS Ruleset Validation', () => {
         },
       );
 
-      it.each(['#Info', '#i', '#Info.contact', '#Info[*]'])('recognizes %s as a valid value of an alias', value => {
-        expect(
-          assertValidRuleset.bind(null, {
-            rules: {},
-            aliases: {
-              alias: {
-                targets: [
-                  {
-                    formats: [formatA],
-                    given: [value],
-                  },
-                ],
+      it.concurrent.each(['#Info', '#i', '#Info.contact', '#Info[*]'])(
+        'recognizes %s as a valid value of an alias',
+        value => {
+          expect(
+            assertValidRuleset.bind(null, {
+              rules: {},
+              aliases: {
+                alias: {
+                  targets: [
+                    {
+                      formats: [formatA],
+                      given: [value],
+                    },
+                  ],
+                },
               },
-            },
-          }),
-        ).not.toThrow();
-      });
+            }),
+          ).not.toThrow();
+        },
+      );
 
-      it.each([null, 1, {}, 'a'])('recognizes %p as invalid targets', targets => {
+      it.concurrent.each([null, 1, {}, 'a'])('recognizes %p as invalid targets', targets => {
         expect(
           assertValidRuleset.bind(null, {
             rules: {},
@@ -539,7 +545,7 @@ describe('JS Ruleset Validation', () => {
         );
       });
 
-      it('demands some target', () => {
+      it.concurrent('demands some target', () => {
         expect(
           assertValidRuleset.bind(null, {
             rules: {},
@@ -560,7 +566,7 @@ describe('JS Ruleset Validation', () => {
         );
       });
 
-      it.each([{}, { formats: [] }, { given: ['$'] }])('demands given & formats to be present', targets => {
+      it.concurrent.each([{}, { formats: [] }, { given: ['$'] }])('demands given & formats to be present', targets => {
         expect(
           assertValidRuleset.bind(null, {
             rules: {},
@@ -582,7 +588,7 @@ describe('JS Ruleset Validation', () => {
         );
       });
 
-      it('recognizes invalid formats', () => {
+      it.concurrent('recognizes invalid formats', () => {
         expect(
           assertValidRuleset.bind(null, {
             rules: {},
@@ -623,7 +629,7 @@ describe('JS Ruleset Validation', () => {
         );
       });
 
-      it('recognizes invalid given', () => {
+      it.concurrent('recognizes invalid given', () => {
         expect(
           assertValidRuleset.bind(null, {
             rules: {},
@@ -656,7 +662,7 @@ describe('JS Ruleset Validation', () => {
 
   describe('then validation', () => {
     describe('custom function', () => {
-      it('given valid then, does not complain', () => {
+      it.concurrent('given valid then, does not complain', () => {
         expect(
           assertValidRuleset.bind(null, {
             rules: {
@@ -688,7 +694,7 @@ describe('JS Ruleset Validation', () => {
   });
 
   describe('parser options validation', () => {
-    it('recognizes valid options', () => {
+    it.concurrent('recognizes valid options', () => {
       expect(
         assertValidRuleset.bind(null, {
           extends: [],
@@ -709,7 +715,7 @@ describe('JS Ruleset Validation', () => {
       ).not.toThrow();
     });
 
-    it('given invalid values, throws', () => {
+    it.concurrent('given invalid values, throws', () => {
       expect(
         assertValidRuleset.bind(null, {
           extends: [],
@@ -736,7 +742,7 @@ describe('JS Ruleset Validation', () => {
 
 // we only check the most notable differences here, since the rest of the validation process is common to both JS and JSON
 describe('JSON Ruleset Validation', () => {
-  it('recognizes valid array-ish extends syntax', () => {
+  it.concurrent('recognizes valid array-ish extends syntax', () => {
     expect(
       assertValidRuleset.bind(
         null,
@@ -749,7 +755,7 @@ describe('JSON Ruleset Validation', () => {
     ).not.toThrow();
   });
 
-  it.each<[unknown, RulesetValidationError[]]>([
+  it.concurrent.each<[unknown, RulesetValidationError[]]>([
     [
       [['test', 'test']],
       [new RulesetValidationError('allowed types are "off", "recommended" and "all"', ['extends', '0', '1'])],
@@ -773,7 +779,7 @@ describe('JSON Ruleset Validation', () => {
     ).toThrowAggregateError(new AggregateError(errors));
   });
 
-  it('recognizes valid ruleset formats syntax', () => {
+  it.concurrent('recognizes valid ruleset formats syntax', () => {
     expect(
       assertValidRuleset.bind(
         null,
@@ -786,7 +792,7 @@ describe('JSON Ruleset Validation', () => {
     ).not.toThrow();
   });
 
-  it.each<[unknown, RulesetValidationError[]]>([
+  it.concurrent.each<[unknown, RulesetValidationError[]]>([
     [
       [2, 'a'],
       [
@@ -809,7 +815,7 @@ describe('JSON Ruleset Validation', () => {
     ).toThrowAggregateError(new AggregateError(errors));
   });
 
-  it('recognizes valid rule formats syntax', () => {
+  it.concurrent('recognizes valid rule formats syntax', () => {
     expect(
       assertValidRuleset.bind(
         null,
@@ -830,7 +836,7 @@ describe('JSON Ruleset Validation', () => {
     ).not.toThrow();
   });
 
-  it.each<[unknown, RulesetValidationError[]]>([
+  it.concurrent.each<[unknown, RulesetValidationError[]]>([
     [
       [2, 'a'],
       [

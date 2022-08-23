@@ -9,7 +9,7 @@ import { Ruleset } from '../ruleset';
 describe('spectral', () => {
   describe('when a $ref appears', () => {
     describe('and a custom resolver is provided', () => {
-      test('will call the resolver with target', async () => {
+      it.concurrent('will call the resolver with target', async () => {
         const customResolver = new Resolver();
 
         const resolve = jest.spyOn(customResolver, 'resolve');
@@ -29,7 +29,7 @@ describe('spectral', () => {
         });
       });
 
-      test('should recognize the source of local $refs', () => {
+      it.concurrent('should recognize the source of local $refs', () => {
         const s = new Spectral();
         const source = 'foo.yaml';
 

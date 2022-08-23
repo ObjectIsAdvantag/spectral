@@ -3,7 +3,7 @@ import { formatParserDiagnostics } from '../errorMessages';
 
 describe('Error messages', () => {
   describe('parser diagnostics', () => {
-    it('prettifies JSON diagnostics', () => {
+    it.concurrent('prettifies JSON diagnostics', () => {
       const diagnostics = [
         {
           range: {
@@ -96,7 +96,7 @@ describe('Error messages', () => {
       ]);
     });
 
-    it('prettifies YAML diagnostics', () => {
+    it.concurrent('prettifies YAML diagnostics', () => {
       const diagnostics = [
         {
           code: 'YAMLException',

@@ -1,7 +1,7 @@
 import { message } from '../message';
 
 describe('message util', () => {
-  test('interpolates correctly', () => {
+  it.concurrent('interpolates correctly', () => {
     const template = 'oops... "{{property}}" is missing;error: {{error}}';
     expect(
       message(template, {
@@ -14,7 +14,7 @@ describe('message util', () => {
     ).toEqual('oops... "description" is missing;error: expected property to be truthy');
   });
 
-  test('evaluates code', () => {
+  it.concurrent('evaluates code', () => {
     const template = 'Property "#{{value.param}}" is missing. Path: #{{path.toUpperCase()}}';
     expect(
       message(template, {
@@ -29,7 +29,7 @@ describe('message util', () => {
     ).toEqual('Property "test" is missing. Path: TEST');
   });
 
-  test.each([0, false, null, undefined])('interpolates %s value correctly', value => {
+  it.concurrent.each([0, false, null, undefined])('interpolates %s value correctly', value => {
     const template = 'Value must not equal {{value}}';
     expect(
       message(template, {
@@ -42,7 +42,7 @@ describe('message util', () => {
     ).toEqual(`Value must not equal ${value}`);
   });
 
-  test('handles siblings', () => {
+  it.concurrent('handles siblings', () => {
     const template = '{{error}}{{error}}{{property}}{{bar}}{{error}}{{error}}';
     expect(
       message(template, {
@@ -55,7 +55,7 @@ describe('message util', () => {
     ).toEqual('foofoobazfoofoo');
   });
 
-  test('strips missing keys', () => {
+  it.concurrent('strips missing keys', () => {
     const template = '{{foo}}missing {{bar}}:(';
     expect(
       message(template, {

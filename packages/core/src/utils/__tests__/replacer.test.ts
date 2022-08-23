@@ -2,7 +2,7 @@ import { Dictionary } from '@stoplight/types';
 import { Replacer } from '../replacer';
 
 describe('Replacer', () => {
-  it('interpolates correctly', () => {
+  it.concurrent('interpolates correctly', () => {
     const replacer = new Replacer<Dictionary<unknown>>(2);
     const template = 'oops... "{{property}}" is missing;error: {{error}}';
     expect(
@@ -23,7 +23,7 @@ describe('Replacer', () => {
     ).toEqual(`Value must not equal ${value}`);
   });
 
-  it('handles siblings', () => {
+  it.concurrent('handles siblings', () => {
     const replacer = new Replacer<Dictionary<unknown>>(2);
     const template = '{{error}}{{error}}{{property}}{{bar}}{{error}}{{error}}';
     expect(
@@ -36,13 +36,13 @@ describe('Replacer', () => {
     ).toEqual('foofoobazfoofoo');
   });
 
-  it('ignores new lines', () => {
+  it.concurrent('ignores new lines', () => {
     const replacer = new Replacer<Dictionary<unknown>>(2);
     const template = '{{\ntest}}';
     expect(replacer.print(template, {})).toEqual(template);
   });
 
-  it('strips missing keys', () => {
+  it.concurrent('strips missing keys', () => {
     const replacer = new Replacer<Dictionary<unknown>>(2);
     const template = '{{foo}}missing {{bar}}:(';
     expect(
@@ -53,7 +53,7 @@ describe('Replacer', () => {
     ).toEqual('missing :(');
   });
 
-  it('evaluates expressions', () => {
+  it.concurrent('evaluates expressions', () => {
     const replacer = new Replacer<Dictionary<unknown>>(2);
 
     const template = "#{{path[1] + '-' + path[2].toUpperCase()}}";
@@ -65,7 +65,7 @@ describe('Replacer', () => {
     ).toEqual('bar-/A');
   });
 
-  it('supports custom functions', () => {
+  it.concurrent('supports custom functions', () => {
     const replacer = new Replacer<Dictionary<unknown>>(2);
     replacer.addFunction('printPath', function () {
       const { path } = this;
@@ -81,7 +81,7 @@ describe('Replacer', () => {
     ).toEqual('foo.bar./a');
   });
 
-  it('given an exception thrown during evaluation, re-throws it', () => {
+  it.concurrent('given an exception thrown during evaluation, re-throws it', () => {
     const replacer = new Replacer<Dictionary<unknown>>(2);
     const template = 'value is: #{{value.name}}';
 

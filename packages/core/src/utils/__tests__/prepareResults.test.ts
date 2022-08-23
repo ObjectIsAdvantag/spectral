@@ -3,7 +3,7 @@ import { defaultComputeResultFingerprint, prepareResults } from '../prepareResul
 import duplicateValidationResults from './__fixtures__/duplicate-validation-results.json';
 
 describe('prepareResults util', () => {
-  it('deduplicate exact validation results', () => {
+  it.concurrent('deduplicate exact validation results', () => {
     expect(prepareResults(duplicateValidationResults, defaultComputeResultFingerprint)).toEqual([
       expect.objectContaining({
         code: 'valid-example-in-schemas',
@@ -14,7 +14,7 @@ describe('prepareResults util', () => {
     ]);
   });
 
-  it('deduplicate exact validation results with unknown source', () => {
+  it.concurrent('deduplicate exact validation results with unknown source', () => {
     const duplicateValidationResultsWithNoSource = duplicateValidationResults.map(result => ({
       ...result,
       source: void 0,
@@ -30,7 +30,7 @@ describe('prepareResults util', () => {
     ]);
   });
 
-  it('deduplicate list of only duplicates', () => {
+  it.concurrent('deduplicate list of only duplicates', () => {
     const onlyDuplicates = [
       { ...duplicateValidationResults[0] },
       { ...duplicateValidationResults[0] },
@@ -41,7 +41,7 @@ describe('prepareResults util', () => {
     expect(prepareResults(onlyDuplicates, defaultComputeResultFingerprint).length).toBe(1);
   });
 
-  it('deduplicate only exact validation results', () => {
+  it.concurrent('deduplicate only exact validation results', () => {
     // verifies that results with the same code/path but different messages will not be de-duplicated
     expect(prepareResults(duplicateValidationResults, defaultComputeResultFingerprint)).toEqual([
       expect.objectContaining({

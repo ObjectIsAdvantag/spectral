@@ -24,19 +24,15 @@ const target = {
 };
 
 describe('linter', () => {
-  let spectral: Spectral;
-
-  beforeEach(() => {
-    spectral = new Spectral();
-  });
-
-  test('should demand some result', () => {
+  it.concurrent('should demand some result', () => {
+    const spectral = new Spectral();
     return expect(spectral.run(new Document('123', Parsers.Json))).rejects.toThrow(
       'No ruleset has been defined. Have you called setRuleset()?',
     );
   });
 
-  test('should not throw if passed in value is not an object', () => {
+  it.concurrent('should not throw if passed in value is not an object', () => {
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         example: {
@@ -52,7 +48,8 @@ describe('linter', () => {
     return expect(spectral.run('123')).resolves.toEqual([]);
   });
 
-  test('given @ in the property key, should still lint as normal', () => {
+  it.concurrent('given @ in the property key, should still lint as normal', () => {
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         example: {
@@ -86,7 +83,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('given failing JSON Path expression, should refuse to lint', async () => {
+  it.concurrent('given failing JSON Path expression, should refuse to lint', async () => {
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         rule1: {
@@ -114,7 +112,7 @@ describe('linter', () => {
     ).rejects.toThrow();
   });
 
-  test('should return all properties matching 4xx response code', async () => {
+  it.concurrent('should return all properties matching 4xx response code', async () => {
     const message = '4xx responses require a description';
 
     function func1(val: unknown) {
@@ -129,6 +127,7 @@ describe('linter', () => {
       return;
     }
 
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         rule1: {
@@ -175,7 +174,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('should support rule overriding severity', async () => {
+  it.concurrent('should support rule overriding severity', async () => {
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         rule1: {
@@ -202,7 +202,8 @@ describe('linter', () => {
     expect(result[0]).toHaveProperty('severity', DiagnosticSeverity.Hint);
   });
 
-  test('should output unescaped json paths', async () => {
+  it.concurrent('should output unescaped json paths', async () => {
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         'valid-header': {
@@ -237,7 +238,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('should handle semicolons in property keys', async () => {
+  it.concurrent('should handle semicolons in property keys', async () => {
+    const spectral = new Spectral();
     const document = new Document(
       `paths:
   content:
@@ -246,8 +248,6 @@ describe('linter', () => {
         type: string # expecting error on this line`,
       Parsers.Yaml,
     );
-
-    const spectral = new Spectral();
 
     spectral.setRuleset({
       rules: {
@@ -283,7 +283,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('should support human readable severity levels', async () => {
+  it.concurrent('should support human readable severity levels', async () => {
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         rule1: {
@@ -323,7 +324,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('should respect the format of data and run rules associated with it', async () => {
+  it.concurrent('should respect the format of data and run rules associated with it', async () => {
+    const spectral = new Spectral();
     const fooBarFormat: Format = obj => typeof obj === 'object' && obj !== null && 'foo-bar' in obj;
 
     spectral.setRuleset({
@@ -361,7 +363,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('should match all formats if rule has no formats defined', async () => {
+  it.concurrent('should match all formats if rule has no formats defined', async () => {
+    const spectral = new Spectral();
     const fooBarFormat: Format = obj => typeof obj === 'object' && obj !== null && 'foo-bar' in obj;
 
     spectral.setRuleset({
@@ -400,7 +403,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('should execute rules matching all found formats', async () => {
+  it.concurrent('should execute rules matching all found formats', async () => {
+    const spectral = new Spectral();
     const fooBarFormat: Format = obj => typeof obj === 'object' && obj !== null && 'foo-bar' in obj;
     const bazFormat: Format = () => true;
 
@@ -442,7 +446,8 @@ describe('linter', () => {
   });
 
   // TODO: Find a way to cover formats more extensively
-  test('given a string input, should warn about unmatched formats', async () => {
+  it.concurrent('given a string input, should warn about unmatched formats', async () => {
+    const spectral = new Spectral();
     const oas2: Format = () => false;
     const oas3: Format = () => false;
     spectral.setRuleset({
@@ -478,7 +483,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('given ignoreUnknownFormat, should not warn about unmatched formats', async () => {
+  it.concurrent('given ignoreUnknownFormat, should not warn about unmatched formats', async () => {
+    const spectral = new Spectral();
     const format: Format = obj => typeof obj === 'object' && obj !== null && 'foo-bar' in obj;
 
     spectral.setRuleset({
@@ -507,7 +513,8 @@ describe('linter', () => {
     expect(result).toEqual([]);
   });
 
-  test('should accept format lookup by source', async () => {
+  it.concurrent('should accept format lookup by source', async () => {
+    const spectral = new Spectral();
     const fooBar: Format = (_, source) => source === '/foo/bar';
 
     spectral.setRuleset({
@@ -540,7 +547,8 @@ describe('linter', () => {
     ]);
   });
 
-  test('should include parser diagnostics', async () => {
+  it.concurrent('should include parser diagnostics', async () => {
+    const spectral = new Spectral();
     const responses = `
 responses:: !!foo
   400:
@@ -592,7 +600,8 @@ responses:: !!foo
     );
   });
 
-  test('should report a valid line number for json paths containing escaped slashes', async () => {
+  it.concurrent('should report a valid line number for json paths containing escaped slashes', async () => {
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         'truthy-get': {
@@ -639,7 +648,8 @@ responses:: !!foo
     ]);
   });
 
-  test('should report invalid schema $refs', async () => {
+  it.concurrent('should report invalid schema $refs', async () => {
+    const spectral = new Spectral();
     spectral.setRuleset({ rules: {} });
     const result = await spectral.run(
       JSON.stringify(
@@ -676,7 +686,7 @@ responses:: !!foo
     ]);
   });
 
-  test('should report when a resolver is no t defined for a given $ref type', async () => {
+  it.concurrent('should report when a resolver is no t defined for a given $ref type', async () => {
     const s = new Spectral({ resolver: new Resolver() });
     s.setRuleset(new Ruleset({ rules: {} }));
 
@@ -703,7 +713,8 @@ responses:: !!foo
   });
 
   describe('reports duplicated properties for', () => {
-    test('JSON format', async () => {
+    it.concurrent('JSON format', async () => {
+      const spectral = new Spectral();
       spectral.setRuleset({ rules: {} });
       const result = await spectral.run('{"foo":true,"foo":false}', {
         ignoreUnknownFormat: true,
@@ -729,7 +740,8 @@ responses:: !!foo
       ]);
     });
 
-    test('YAML format', async () => {
+    it.concurrent('YAML format', async () => {
+      const spectral = new Spectral();
       spectral.setRuleset({ rules: {} });
       const result = await spectral.run(`foo: bar\nfoo: baz`, {
         ignoreUnknownFormat: true,
@@ -756,7 +768,8 @@ responses:: !!foo
     });
   });
 
-  test('should report invalid YAML mapping keys', async () => {
+  it.concurrent('should report invalid YAML mapping keys', async () => {
+    const spectral = new Spectral();
     spectral.setRuleset({ rules: {} });
     const results = await spectral.run(
       `responses:
@@ -788,7 +801,8 @@ responses:: !!foo
   });
 
   describe('parser options', () => {
-    test('should allow changing the severity of invalid YAML mapping keys diagnostics', async () => {
+    it.concurrent('should allow changing the severity of invalid YAML mapping keys diagnostics', async () => {
+      const spectral = new Spectral();
       spectral.setRuleset({
         rules: {},
         parserOptions: {
@@ -824,7 +838,8 @@ responses:: !!foo
       ]);
     });
 
-    test('should allow disabling invalid YAML mapping keys diagnostics', async () => {
+    it.concurrent('should allow disabling invalid YAML mapping keys diagnostics', async () => {
+      const spectral = new Spectral();
       spectral.setRuleset({
         rules: {},
         parserOptions: {
@@ -844,9 +859,10 @@ responses:: !!foo
       expect(results).toEqual([]);
     });
 
-    test.each<keyof typeof Parsers>(['Json', 'Yaml'])(
+    it.concurrent.each<keyof typeof Parsers>(['Json', 'Yaml'])(
       'should allow changing the severity of duplicate key diagnostics reported by %s parser',
       async parser => {
+        const spectral = new Spectral();
         spectral.setRuleset({
           rules: {},
           parserOptions: {
@@ -886,9 +902,10 @@ responses:: !!foo
       },
     );
 
-    test.each<keyof typeof Parsers>(['Json', 'Yaml'])(
+    it.concurrent.each<keyof typeof Parsers>(['Json', 'Yaml'])(
       'should allow disabling duplicate key diagnostics reported by %s parser',
       async parser => {
+        const spectral = new Spectral();
         spectral.setRuleset({
           rules: {},
           parserOptions: {
@@ -916,10 +933,12 @@ responses:: !!foo
   describe('functional tests for the then statement', () => {
     let fakeLintingFunction: jest.Mock;
     let fakeLintingFunction2: jest.Mock;
+    let spectral: Spectral;
 
     beforeEach(() => {
       fakeLintingFunction = jest.fn();
       fakeLintingFunction2 = jest.fn();
+      spectral = new Spectral();
       spectral.setRuleset({
         rules: {
           example: {
@@ -946,7 +965,7 @@ responses:: !!foo
     });
 
     describe('given list of then objects', () => {
-      test('should call each one with the appropriate args', async () => {
+      it('should call each one with the appropriate args', async () => {
         await spectral.run(target);
 
         expect(fakeLintingFunction).toHaveBeenCalledTimes(1);
@@ -964,7 +983,7 @@ responses:: !!foo
     });
 
     describe('given many then field matches', () => {
-      test('should call each one with the appropriate args', async () => {
+      it('should call each one with the appropriate args', async () => {
         spectral.setRuleset({
           rules: {
             example: {
@@ -989,8 +1008,8 @@ responses:: !!foo
   });
 
   describe('evaluate {{value}} in validation messages', () => {
-    test('should print primitive values', () => {
-      spectral = new Spectral();
+    it.concurrent('should print primitive values', () => {
+      const spectral = new Spectral();
       spectral.setRuleset({
         rules: {
           'header-parameter-names-kebab-case': {
@@ -1042,8 +1061,8 @@ responses:: !!foo
       ]);
     });
 
-    test('should not attempt to print complex values', () => {
-      spectral = new Spectral();
+    it.concurrent('should not attempt to print complex values', () => {
+      const spectral = new Spectral();
       spectral.setRuleset({
         rules: {
           'empty-is-falsy': {
@@ -1087,7 +1106,7 @@ responses:: !!foo
       ]);
     });
 
-    test('should print correct values for referenced files', async () => {
+    it.concurrent('should print correct values for referenced files', async () => {
       const resolver = new Resolver({
         resolvers: {
           file: {
@@ -1105,7 +1124,7 @@ responses:: !!foo
         },
       });
 
-      spectral = new Spectral({ resolver });
+      const spectral = new Spectral({ resolver });
 
       spectral.setRuleset({
         rules: {
@@ -1164,7 +1183,8 @@ responses:: !!foo
     });
   });
 
-  test('should evaluate {{path}} in validation messages', async () => {
+  it.concurrent('should evaluate {{path}} in validation messages', async () => {
+    const spectral = new Spectral();
     spectral.setRuleset({
       rules: {
         'truthy-get': {
@@ -1200,7 +1220,8 @@ responses:: !!foo
   });
 
   describe('runWithResolved', () => {
-    test('should include both resolved and validation results', async () => {
+    it.concurrent('should include both resolved and validation results', async () => {
+      const spectral = new Spectral();
       const document = JSON.stringify({
         info: null,
       });
@@ -1227,7 +1248,10 @@ responses:: !!foo
   });
 
   describe('legacy parsed document', () => {
+    let spectral: Spectral;
+
     beforeEach(() => {
+      spectral = new Spectral();
       spectral.setRuleset({
         rules: {
           'falsy-document': {
@@ -1241,7 +1265,7 @@ responses:: !!foo
       });
     });
 
-    test('should set parsed.source as the source of document', async () => {
+    it('should set parsed.source as the source of document', async () => {
       const parsedResult: IParsedResult = {
         parsed: {
           data: {},
@@ -1266,7 +1290,7 @@ responses:: !!foo
     });
   });
 
-  test.each(['1', 'null', '', 'false'])('given %s input, should report nothing', async input => {
+  it.concurrent.each(['1', 'null', '', 'false'])('given %s input, should report nothing', async input => {
     const s = new Spectral();
     s.setRuleset(new Ruleset({ rules: {} }));
 
@@ -1278,7 +1302,7 @@ responses:: !!foo
     expect(results).toEqual([]);
   });
 
-  test('should be capable of linting arrays', async () => {
+  it.concurrent('should be capable of linting arrays', async () => {
     const s = new Spectral();
 
     s.setRuleset({
@@ -1327,7 +1351,7 @@ responses:: !!foo
   });
 
   describe('Pointers in overrides', () => {
-    test('should be supported', async () => {
+    it.concurrent('should be supported', async () => {
       const documentUri = normalize(path.join(__dirname, './__fixtures__/test.json'));
       const ruleset: RulesetDefinition = {
         rules: {
@@ -1410,7 +1434,7 @@ responses:: !!foo
       ]);
     });
 
-    test('should respect the order of definitions', async () => {
+    it.concurrent('should respect the order of definitions', async () => {
       const documentUri = normalize(path.join(__dirname, './__fixtures__/test.json'));
       const ruleset: RulesetDefinition = {
         rules: {
@@ -1483,7 +1507,7 @@ responses:: !!foo
       ]);
     });
 
-    test('should prefer the closest path', async () => {
+    it.concurrent('should prefer the closest path', async () => {
       const documentUri = normalize(path.join(__dirname, './__fixtures__/test.json'));
       const ruleset: RulesetDefinition = {
         rules: {

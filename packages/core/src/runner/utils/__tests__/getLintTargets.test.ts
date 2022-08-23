@@ -2,7 +2,7 @@ import { getLintTargets } from '../getLintTargets';
 
 describe('getLintTargets', () => {
   describe('when @key is given as field', () => {
-    it('given object, returns its keys', () => {
+    it.concurrent('given object, returns its keys', () => {
       expect(getLintTargets({ a: null, b: true }, '@key')).toStrictEqual([
         {
           path: ['a'],
@@ -15,7 +15,7 @@ describe('getLintTargets', () => {
       ]);
     });
 
-    it('given array, returns its indicies', () => {
+    it.concurrent('given array, returns its indicies', () => {
       expect(getLintTargets(['foo', 'bar'], '@key')).toStrictEqual([
         {
           path: ['0'],
@@ -28,7 +28,7 @@ describe('getLintTargets', () => {
       ]);
     });
 
-    it('given primitive property, returns the whole input', () => {
+    it.concurrent('given primitive property, returns the whole input', () => {
       expect(getLintTargets('abc', '0')).toStrictEqual([
         {
           path: [],
@@ -39,7 +39,7 @@ describe('getLintTargets', () => {
   });
 
   describe('when property path is given as field', () => {
-    it('given existing property, returns lint targets', () => {
+    it.concurrent('given existing property, returns lint targets', () => {
       expect(getLintTargets({ a: null }, 'a')).toStrictEqual([
         {
           path: ['a'],
@@ -69,7 +69,7 @@ describe('getLintTargets', () => {
       ]);
     });
 
-    it('given non-existing property, returns lint target with undefined value', () => {
+    it.concurrent('given non-existing property, returns lint target with undefined value', () => {
       expect(getLintTargets({ a: null }, 'b')).toStrictEqual([
         {
           path: ['b'],
@@ -85,7 +85,7 @@ describe('getLintTargets', () => {
       ]);
     });
 
-    it('given primitive property, returns the whole input', () => {
+    it.concurrent('given primitive property, returns the whole input', () => {
       expect(getLintTargets('abc', '0')).toStrictEqual([
         {
           path: [],
@@ -96,7 +96,7 @@ describe('getLintTargets', () => {
   });
 
   describe('when JSON Path expression is given as field', () => {
-    it('given existing property, returns lint targets', () => {
+    it.concurrent('given existing property, returns lint targets', () => {
       expect(getLintTargets({ a: null }, '$')).toStrictEqual([
         {
           path: [],
@@ -114,7 +114,7 @@ describe('getLintTargets', () => {
       ]);
     });
 
-    it('given non-existing property, returns lint target with undefined value', () => {
+    it.concurrent('given non-existing property, returns lint target with undefined value', () => {
       expect(getLintTargets({ a: null }, '$.b')).toStrictEqual([
         {
           path: [],
@@ -130,7 +130,7 @@ describe('getLintTargets', () => {
       ]);
     });
 
-    it('given primitive property, returns the whole input', () => {
+    it.concurrent('given primitive property, returns the whole input', () => {
       expect(getLintTargets('abc', '0')).toStrictEqual([
         {
           path: [],
@@ -140,7 +140,7 @@ describe('getLintTargets', () => {
     });
   });
 
-  it('given no field, returns the whole input', () => {
+  it.concurrent('given no field, returns the whole input', () => {
     expect(getLintTargets({ a: true }, void 0)).toStrictEqual([
       {
         path: [],

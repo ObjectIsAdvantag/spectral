@@ -22,7 +22,7 @@ describe('Ruleset', () => {
       return Object.keys(rules).filter(name => rules[name].enabled);
     }
 
-    it('given ruleset with extends set to recommended, should enable recommended rules', async () => {
+    it.concurrent('given ruleset with extends set to recommended, should enable recommended rules', async () => {
       const ruleset = await loadRuleset(import('./__fixtures__/severity/recommended'));
       expect(Object.keys(ruleset.rules)).toEqual([
         'description-matches-stoplight',
@@ -40,47 +40,56 @@ describe('Ruleset', () => {
       expect(print(ruleset)).toEqual(print(await loadRuleset(import('./__fixtures__/severity/implicit'))));
     });
 
-    it('given ruleset with extends set to all, should enable all rules but explicitly disabled', async () => {
-      const { rules } = await loadRuleset(import('./__fixtures__/severity/all'));
-      expect(Object.keys(rules)).toEqual([
-        'description-matches-stoplight',
-        'title-matches-stoplight',
-        'contact-name-matches-stoplight',
-        'overridable-rule',
-      ]);
+    it.concurrent(
+      'given ruleset with extends set to all, should enable all rules but explicitly disabled',
+      async () => {
+        const { rules } = await loadRuleset(import('./__fixtures__/severity/all'));
+        expect(Object.keys(rules)).toEqual([
+          'description-matches-stoplight',
+          'title-matches-stoplight',
+          'contact-name-matches-stoplight',
+          'overridable-rule',
+        ]);
 
-      expect(getEnabledRules(rules)).toEqual([
-        'title-matches-stoplight',
-        'contact-name-matches-stoplight',
-        'overridable-rule',
-      ]);
-    });
+        expect(getEnabledRules(rules)).toEqual([
+          'title-matches-stoplight',
+          'contact-name-matches-stoplight',
+          'overridable-rule',
+        ]);
+      },
+    );
 
-    it('given ruleset with extends set to off, should disable all rules but explicitly enabled', async () => {
-      const { rules } = await loadRuleset(import('./__fixtures__/severity/off'));
-      expect(Object.keys(rules)).toEqual([
-        'description-matches-stoplight',
-        'title-matches-stoplight',
-        'contact-name-matches-stoplight',
-        'overridable-rule',
-      ]);
+    it.concurrent(
+      'given ruleset with extends set to off, should disable all rules but explicitly enabled',
+      async () => {
+        const { rules } = await loadRuleset(import('./__fixtures__/severity/off'));
+        expect(Object.keys(rules)).toEqual([
+          'description-matches-stoplight',
+          'title-matches-stoplight',
+          'contact-name-matches-stoplight',
+          'overridable-rule',
+        ]);
 
-      expect(getEnabledRules(rules)).toEqual(['overridable-rule']);
-    });
+        expect(getEnabledRules(rules)).toEqual(['overridable-rule']);
+      },
+    );
 
-    it('given ruleset with extends set to off, should disable all rules but explicitly redeclared', async () => {
-      const { rules } = await loadRuleset(import('./__fixtures__/severity/off-redeclared'));
-      expect(Object.keys(rules)).toEqual([
-        'description-matches-stoplight',
-        'title-matches-stoplight',
-        'contact-name-matches-stoplight',
-        'overridable-rule',
-      ]);
+    it.concurrent(
+      'given ruleset with extends set to off, should disable all rules but explicitly redeclared',
+      async () => {
+        const { rules } = await loadRuleset(import('./__fixtures__/severity/off-redeclared'));
+        expect(Object.keys(rules)).toEqual([
+          'description-matches-stoplight',
+          'title-matches-stoplight',
+          'contact-name-matches-stoplight',
+          'overridable-rule',
+        ]);
 
-      expect(getEnabledRules(rules)).toEqual(['overridable-rule']);
-    });
+        expect(getEnabledRules(rules)).toEqual(['overridable-rule']);
+      },
+    );
 
-    it('given nested extends with severity set to off', async () => {
+    it.concurrent('given nested extends with severity set to off', async () => {
       const { rules } = await loadRuleset(import('./__fixtures__/severity/off-proxy'));
       expect(Object.keys(rules)).toEqual([
         'description-matches-stoplight',
@@ -92,7 +101,7 @@ describe('Ruleset', () => {
       expect(getEnabledRules(rules)).toEqual(['overridable-rule']);
     });
 
-    it('given nested extends with severity set to off and explicit override to error', async () => {
+    it.concurrent('given nested extends with severity set to off and explicit override to error', async () => {
       const { rules } = await loadRuleset(import('./__fixtures__/severity/error'));
       expect(Object.keys(rules)).toEqual([
         'description-matches-stoplight',
@@ -105,7 +114,7 @@ describe('Ruleset', () => {
     });
   });
 
-  it('formats', async () => {
+  it.concurrent('formats', async () => {
     expect(print(await loadRuleset(import('./__fixtures__/formats/ruleset')))).toEqual(`├─ formats
 │  ├─ 0: OpenAPI 2.0 (Swagger)
 │  └─ 1: OpenAPI 3.x
@@ -182,7 +191,7 @@ describe('Ruleset', () => {
   });
 
   describe('circularity', () => {
-    it('should handle direct circular extension', async () => {
+    it.concurrent('should handle direct circular extension', async () => {
       expect(print(await loadRuleset(import('./__fixtures__/circularity/direct')))).toEqual(`└─ rules
    └─ foo-rule
       ├─ name: foo-rule
@@ -194,7 +203,7 @@ describe('Ruleset', () => {
 `);
     });
 
-    it('should handle indirect circular extension', async () => {
+    it.concurrent('should handle indirect circular extension', async () => {
       expect(print(await loadRuleset(import('./__fixtures__/circularity/indirect.1')))).toEqual(`└─ rules
    ├─ baz-rule
    │  ├─ name: baz-rule
@@ -220,7 +229,7 @@ describe('Ruleset', () => {
 `);
     });
 
-    it('should be serializable', async () => {
+    it.concurrent('should be serializable', async () => {
       expect(JSON.parse(JSON.stringify(await loadRuleset(import('./__fixtures__/circularity/direct'))))).toEqual({
         id: expect.any(Number),
         source: null,
@@ -257,14 +266,14 @@ describe('Ruleset', () => {
   });
 
   describe('error handling', () => {
-    it('given empty ruleset, should throw a user friendly error', () => {
+    it.concurrent('given empty ruleset, should throw a user friendly error', () => {
       expect(() => new Ruleset({})).toThrowError(
         new RulesetValidationError('Ruleset must have rules or extends or overrides defined', []),
       );
     });
   });
 
-  it('should respect documentationUrl', async () => {
+  it.concurrent('should respect documentationUrl', async () => {
     const ruleset = {
       documentationUrl: 'https://stoplight.io/p/docs/gh/stoplightio/spectral/docs/reference/openapi-rules.md',
       rules: {
@@ -308,7 +317,7 @@ describe('Ruleset', () => {
 `);
   });
 
-  it('should include parserOptions', async () => {
+  it.concurrent('should include parserOptions', async () => {
     const { parserOptions } = await loadRuleset(import('./__fixtures__/parser-options-ruleset'));
 
     expect(parserOptions).toStrictEqual({
@@ -320,23 +329,26 @@ describe('Ruleset', () => {
   describe('overrides', () => {
     const cwd = path.join(__dirname, './__fixtures__/overrides/');
 
-    it('given no overrides, should return the initial ruleset', async () => {
+    it.concurrent('given no overrides, should return the initial ruleset', async () => {
       const ruleset = await loadRuleset(import('./__fixtures__/overrides/_base'), path.join(cwd, 'hierarchy'));
 
       expect(ruleset.fromSource(null)).toBe(ruleset);
     });
 
-    it('given a ruleset with overrides only, should consider rule as empty for unmatched files', async () => {
-      const ruleset = await loadRuleset(
-        import('./__fixtures__/overrides/only-overrides'),
-        path.join(cwd, 'only-overrides'),
-      );
+    it.concurrent(
+      'given a ruleset with overrides only, should consider rule as empty for unmatched files',
+      async () => {
+        const ruleset = await loadRuleset(
+          import('./__fixtures__/overrides/only-overrides'),
+          path.join(cwd, 'only-overrides'),
+        );
 
-      expect(ruleset.rules).toEqual({});
-      expect(ruleset.fromSource(path.join(cwd, 'spec.yaml')).rules).toEqual({});
-    });
+        expect(ruleset.rules).toEqual({});
+        expect(ruleset.fromSource(path.join(cwd, 'spec.yaml')).rules).toEqual({});
+      },
+    );
 
-    it('given a ruleset with rules only, should apply overrides', async () => {
+    it.concurrent('given a ruleset with rules only, should apply overrides', async () => {
       const ruleset = await loadRuleset(import('./__fixtures__/overrides/only-rules'), path.join(cwd, 'only-rules'));
 
       expect(print(ruleset)).toEqual(print(await loadRuleset(import('./__fixtures__/overrides/_base'))));
@@ -420,7 +432,7 @@ describe('Ruleset', () => {
 `);
     });
 
-    it('should respect the hierarchy of overrides', async () => {
+    it.concurrent('should respect the hierarchy of overrides', async () => {
       const ruleset = await loadRuleset(import('./__fixtures__/overrides/hierarchy'), path.join(cwd, 'hierarchy'));
 
       expect(print(ruleset)).toEqual(print(await loadRuleset(import('./__fixtures__/overrides/_base'))));
@@ -525,7 +537,7 @@ describe('Ruleset', () => {
 `);
     });
 
-    it('should be serializable', async () => {
+    it.concurrent('should be serializable', async () => {
       const ruleset = await loadRuleset(import('./__fixtures__/overrides/serializing'), path.join(cwd, 'serializing'));
 
       expect(JSON.parse(JSON.stringify(ruleset))).toEqual({
@@ -624,7 +636,7 @@ describe('Ruleset', () => {
       });
     });
 
-    it('should support new rule definitions', async () => {
+    it.concurrent('should support new rule definitions', async () => {
       const ruleset = await loadRuleset(
         import('./__fixtures__/overrides/new-definitions'),
         path.join(cwd, 'new-definitions'),
@@ -690,7 +702,7 @@ describe('Ruleset', () => {
 `);
     });
 
-    it('should respect parserOptions', async () => {
+    it.concurrent('should respect parserOptions', async () => {
       const ruleset = await loadRuleset(
         import('./__fixtures__/overrides/parser-options'),
         path.join(cwd, 'parser-options'),
@@ -712,7 +724,7 @@ describe('Ruleset', () => {
       });
     });
 
-    it('should respect formats', async () => {
+    it.concurrent('should respect formats', async () => {
       const ruleset = await loadRuleset(import('./__fixtures__/overrides/formats'), path.join(cwd, 'formats'));
 
       expect(print(ruleset.fromSource(path.join(cwd, 'schemas/common/user.draft7.json')))).toEqual(`├─ formats
@@ -791,7 +803,7 @@ describe('Ruleset', () => {
     describe('aliases', () => {
       const cwd = path.join(__dirname, './__fixtures__/overrides/aliases');
 
-      it('given locally defined aliases, should merge them same as rules', async () => {
+      it.concurrent('given locally defined aliases, should merge them same as rules', async () => {
         const ruleset = await loadRuleset(import('./__fixtures__/overrides/aliases/scope'), path.join(cwd, 'scope'));
 
         expect(print(ruleset.fromSource(path.join(cwd, 'document.json')))).toEqual(`└─ rules
@@ -836,10 +848,12 @@ describe('Ruleset', () => {
     describe('extends', () => {
       const cwd = path.join(__dirname, './__fixtures__/overrides/extends');
 
-      it('given local extend with severity set to all, should mark all rules as enabled for matching files', async () => {
-        const ruleset = await loadRuleset(import('./__fixtures__/overrides/extends/all'), path.join(cwd, 'all'));
+      it.concurrent(
+        'given local extend with severity set to all, should mark all rules as enabled for matching files',
+        async () => {
+          const ruleset = await loadRuleset(import('./__fixtures__/overrides/extends/all'), path.join(cwd, 'all'));
 
-        expect(print(ruleset.fromSource(path.join(cwd, 'document.json')))).toEqual(`└─ rules
+          expect(print(ruleset.fromSource(path.join(cwd, 'document.json')))).toEqual(`└─ rules
    ├─ description-matches-stoplight
    │  ├─ name: description-matches-stoplight
    │  ├─ enabled: true
@@ -862,9 +876,10 @@ describe('Ruleset', () => {
       │  └─ 0: $.info.contact
       └─ severity: 1
 `);
-      });
+        },
+      );
 
-      it('given multiple extends, should merge them respecting the hierarchy', async () => {
+      it.concurrent('given multiple extends, should merge them respecting the hierarchy', async () => {
         const ruleset = await loadRuleset(
           import('./__fixtures__/overrides/extends/multiple-extends'),
           path.join(cwd, 'multiple-extends'),
@@ -919,10 +934,12 @@ describe('Ruleset', () => {
 `);
       });
 
-      it('given presence of extends in both the ruleset and the override, should always prioritize the override', async () => {
-        const ruleset = await loadRuleset(import('./__fixtures__/overrides/extends/both'), path.join(cwd, 'both'));
+      it.concurrent(
+        'given presence of extends in both the ruleset and the override, should always prioritize the override',
+        async () => {
+          const ruleset = await loadRuleset(import('./__fixtures__/overrides/extends/both'), path.join(cwd, 'both'));
 
-        expect(print(ruleset.fromSource(path.join(cwd, 'document.json')))).toEqual(`└─ rules
+          expect(print(ruleset.fromSource(path.join(cwd, 'document.json')))).toEqual(`└─ rules
    ├─ description-matches-stoplight
    │  ├─ name: description-matches-stoplight
    │  ├─ enabled: true
@@ -946,11 +963,11 @@ describe('Ruleset', () => {
       └─ severity: 1
 `);
 
-        expect(print(ruleset.fromSource(path.join(cwd, 'v2/document.json')))).toEqual(
-          print(ruleset.fromSource(path.join(cwd, 'document.json'))),
-        );
+          expect(print(ruleset.fromSource(path.join(cwd, 'v2/document.json')))).toEqual(
+            print(ruleset.fromSource(path.join(cwd, 'document.json'))),
+          );
 
-        expect(print(ruleset.fromSource(path.join(cwd, 'document.yaml')))).toEqual(`└─ rules
+          expect(print(ruleset.fromSource(path.join(cwd, 'document.yaml')))).toEqual(`└─ rules
    ├─ description-matches-stoplight
    │  ├─ name: description-matches-stoplight
    │  ├─ enabled: false
@@ -973,10 +990,11 @@ describe('Ruleset', () => {
       │  └─ 0: $.info.contact
       └─ severity: 1
 `);
-      });
+        },
+      );
 
       describe('error handling', () => {
-        it('given document with no source, should throw an error', async () => {
+        it.concurrent('given document with no source, should throw an error', async () => {
           const ruleset = await loadRuleset(import('./__fixtures__/overrides/hierarchy'), path.join(cwd, 'hierarchy'));
 
           expect(ruleset.fromSource.bind(ruleset, null)).toThrowError(
@@ -986,7 +1004,7 @@ describe('Ruleset', () => {
           );
         });
 
-        it('given ruleset with no source, should throw an error', async () => {
+        it.concurrent('given ruleset with no source, should throw an error', async () => {
           const ruleset = await loadRuleset(import('./__fixtures__/overrides/hierarchy'));
 
           expect(ruleset.fromSource.bind(ruleset, path.join(cwd, 'v2/spec.json'))).toThrowError(
@@ -996,7 +1014,7 @@ describe('Ruleset', () => {
           );
         });
 
-        it('given no local or extended rule, should throw an error', async () => {
+        it.concurrent('given no local or extended rule, should throw an error', async () => {
           const ruleset = await loadRuleset(
             import('./__fixtures__/overrides/new-definitions-error'),
             path.join(cwd, 'new-definitions-error'),
@@ -1011,7 +1029,7 @@ describe('Ruleset', () => {
   });
 
   describe('aliases', () => {
-    it('should resolve locally defined aliases', () => {
+    it.concurrent('should resolve locally defined aliases', () => {
       expect(
         print(
           new Ruleset({
@@ -1072,7 +1090,7 @@ describe('Ruleset', () => {
 `);
     });
 
-    it('should be serializable', () => {
+    it.concurrent('should be serializable', () => {
       expect(
         JSON.parse(
           JSON.stringify(
@@ -1186,7 +1204,7 @@ describe('Ruleset', () => {
       });
     });
 
-    it('should resolve nested aliases', () => {
+    it.concurrent('should resolve nested aliases', () => {
       expect(
         print(
           new Ruleset({
@@ -1247,7 +1265,7 @@ describe('Ruleset', () => {
 `);
     });
 
-    it('given unresolved alias, should throw', () => {
+    it.concurrent('given unresolved alias, should throw', () => {
       expect(
         () =>
           new Ruleset({
@@ -1269,7 +1287,7 @@ describe('Ruleset', () => {
       ).toThrowError(ReferenceError('Alias "PathItem-" does not exist'));
     });
 
-    it('given circular alias, should throw', () => {
+    it.concurrent('given circular alias, should throw', () => {
       expect(
         () =>
           new Ruleset({
@@ -1293,7 +1311,7 @@ describe('Ruleset', () => {
       );
     });
 
-    it('should refuse to resolve externally defined aliases', () => {
+    it.concurrent('should refuse to resolve externally defined aliases', () => {
       expect(
         () =>
           new Ruleset({
@@ -1330,7 +1348,7 @@ describe('Ruleset', () => {
         (input): input is unknown =>
           true;
 
-      it('should resolve locally defined aliases according to their targets', () => {
+      it.concurrent('should resolve locally defined aliases according to their targets', () => {
         const oas2 = createStubFormat();
         const oas3 = createStubFormat();
         const draft4 = createStubFormat();
@@ -1412,7 +1430,7 @@ describe('Ruleset', () => {
         ]);
       });
 
-      it('given circular alias, should throw', () => {
+      it.concurrent('given circular alias, should throw', () => {
         const oas3 = createStubFormat();
 
         const ruleset = new Ruleset({
@@ -1459,7 +1477,7 @@ describe('Ruleset', () => {
         );
       });
 
-      it('should drop aliases not matching any target', () => {
+      it.concurrent('should drop aliases not matching any target', () => {
         const draft6: Format<JSONSchema6> = (input): input is JSONSchema6 =>
           isPlainObject(input) && input.$schema === 'http://json-schema.org/draft-06/schema#';
         const draft7: Format<JSONSchema7> = (input): input is JSONSchema7 =>
@@ -1493,7 +1511,7 @@ describe('Ruleset', () => {
         expect(ruleset.rules['valid-id'].getGivenForFormats(new Formats([]))).toStrictEqual([]);
       });
 
-      it('should be serializable', () => {
+      it.concurrent('should be serializable', () => {
         const draft4: Format<JSONSchema4> = (input): input is JSONSchema4 =>
           isPlainObject(input) && input.$schema === 'http://json-schema.org/draft-04/schema#';
         const draft6: Format<JSONSchema6> = (input): input is JSONSchema6 =>
