@@ -8,12 +8,12 @@ import AggregateError = require('es-aggregate-error');
 const runUnreferencedReusableObject = testFunction.bind(null, unreferencedReusableObject);
 
 describe('Core Functions / UnreferencedReusableObject', () => {
-  it('given a non object data, should return no error message', async () => {
+  it.concurrent('given a non object data, should return no error message', async () => {
     expect(await runUnreferencedReusableObject('Nope', { reusableObjectsLocation: '#' })).toEqual([]);
   });
 
   describe('validation', () => {
-    it.each([
+    it.concurrent.each([
       {
         reusableObjectsLocation: '#',
       },
@@ -27,7 +27,7 @@ describe('Core Functions / UnreferencedReusableObject', () => {
       expect(await runUnreferencedReusableObject({}, opts)).toEqual([]);
     });
 
-    it.each<[unknown, RulesetValidationError[]]>([
+    it.concurrent.each<[unknown, RulesetValidationError[]]>([
       [
         null,
         [

@@ -8,11 +8,11 @@ import AggregateError = require('es-aggregate-error');
 const runEnumeration = testFunction.bind(null, enumeration);
 
 describe('Core Functions / Enumeration', () => {
-  it('given valid input, should return no error message', async () => {
+  it.concurrent('given valid input, should return no error message', async () => {
     expect(await runEnumeration('x', { values: ['x', 'y', 'z'] })).toEqual([]);
   });
 
-  it('given invalid input, should return an error message', async () => {
+  it.concurrent('given invalid input, should return an error message', async () => {
     expect(await runEnumeration('x', { values: ['y', 'z'] })).toEqual([
       {
         message: '"x" must be equal to one of the allowed values: "y", "z"',
@@ -21,12 +21,12 @@ describe('Core Functions / Enumeration', () => {
     ]);
   });
 
-  it('given no primitive value, should return no error message', async () => {
+  it.concurrent('given no primitive value, should return no error message', async () => {
     expect(await runEnumeration({}, { values: ['test'] })).toEqual([]);
   });
 
   describe('validation', () => {
-    it('given valid options, should not throw', async () => {
+    it.concurrent('given valid options, should not throw', async () => {
       expect(
         await runEnumeration('foo', {
           values: ['foo', 2],
@@ -34,7 +34,7 @@ describe('Core Functions / Enumeration', () => {
       ).toEqual([]);
     });
 
-    it.each<[unknown, RulesetValidationError[]]>([
+    it.concurrent.each<[unknown, RulesetValidationError[]]>([
       [
         {
           values: ['foo', 2],

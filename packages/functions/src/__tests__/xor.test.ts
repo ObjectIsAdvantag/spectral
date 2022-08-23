@@ -8,7 +8,7 @@ import AggregateError = require('es-aggregate-error');
 const runXor = testFunction.bind(null, xor);
 
 describe('Core Functions / Xor', () => {
-  it('given no properties, should return an error message', async () => {
+  it.concurrent('given no properties, should return an error message', async () => {
     expect(
       await runXor(
         {
@@ -26,7 +26,7 @@ describe('Core Functions / Xor', () => {
     ]);
   });
 
-  it('given both properties, should return an error message', async () => {
+  it.concurrent('given both properties, should return an error message', async () => {
     expect(
       await runXor(
         {
@@ -44,11 +44,11 @@ describe('Core Functions / Xor', () => {
     ]);
   });
 
-  it('given invalid input, should should no error message', async () => {
+  it.concurrent('given invalid input, should should no error message', async () => {
     return expect(await runXor(null, { properties: ['version', 'title'] })).toEqual([]);
   });
 
-  it('given only one of the properties, should return no error message', async () => {
+  it.concurrent('given only one of the properties, should return no error message', async () => {
     expect(
       await runXor(
         {
@@ -62,11 +62,11 @@ describe('Core Functions / Xor', () => {
   });
 
   describe('validation', () => {
-    it.each([{ properties: ['foo', 'bar'] }])('given valid %p options, should not throw', async opts => {
+    it.concurrent.each([{ properties: ['foo', 'bar'] }])('given valid %p options, should not throw', async opts => {
       expect(await runXor([], opts)).toEqual([]);
     });
 
-    it.each<[unknown, RulesetValidationError[]]>([
+    it.concurrent.each<[unknown, RulesetValidationError[]]>([
       [
         null,
         [

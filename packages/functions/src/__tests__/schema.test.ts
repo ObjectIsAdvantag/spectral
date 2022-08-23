@@ -8,7 +8,7 @@ import AggregateError = require('es-aggregate-error');
 const runSchema = testFunction.bind(null, schema);
 
 describe('Core Functions / Schema', () => {
-  it('validates draft 4', async () => {
+  it.concurrent('validates draft 4', async () => {
     const schema = {
       $schema: 'http://json-schema.org/draft-04/schema#',
       type: 'number',
@@ -27,7 +27,7 @@ describe('Core Functions / Schema', () => {
     expect(await runSchema(2, { schema, dialect: 'auto' })).toStrictEqual(result);
   });
 
-  it('validates draft 6', async () => {
+  it.concurrent('validates draft 6', async () => {
     const schema = {
       $schema: 'http://json-schema.org/draft-06/schema#',
       type: 'string',
@@ -44,7 +44,7 @@ describe('Core Functions / Schema', () => {
     expect(await runSchema(2, { schema, dialect: 'auto' })).toStrictEqual(result);
   });
 
-  it('allows redundant escapes', async () => {
+  it.concurrent('allows redundant escapes', async () => {
     let schema = {
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'string',
@@ -72,7 +72,7 @@ describe('Core Functions / Schema', () => {
     ]);
   });
 
-  it('outputs Ajv runtime errors', async () => {
+  it.concurrent('outputs Ajv runtime errors', async () => {
     let schema = {
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'string',
@@ -115,7 +115,7 @@ describe('Core Functions / Schema', () => {
   });
 
   describe('validates falsy values such as', () => {
-    it('empty string', async () => {
+    it.concurrent('empty string', async () => {
       const schema: JSONSchema = {
         type: 'number',
       };
@@ -128,7 +128,7 @@ describe('Core Functions / Schema', () => {
       ]);
     });
 
-    it('zero', async () => {
+    it.concurrent('zero', async () => {
       const schema: JSONSchema = {
         type: 'string',
       };
@@ -141,7 +141,7 @@ describe('Core Functions / Schema', () => {
       ]);
     });
 
-    it('false', async () => {
+    it.concurrent('false', async () => {
       const schema: JSONSchema = {
         type: 'string',
       };
@@ -154,7 +154,7 @@ describe('Core Functions / Schema', () => {
       ]);
     });
 
-    it('null', async () => {
+    it.concurrent('null', async () => {
       const schema: JSONSchema = {
         type: 'string',
       };
@@ -200,7 +200,7 @@ describe('Core Functions / Schema', () => {
       maxItems: 1,
     };
 
-    it('errors with totally invalid input', async () => {
+    it.concurrent('errors with totally invalid input', async () => {
       const input = { foo: 'bar' };
       expect(await runSchema(input, { schema })).toEqual([
         {
@@ -210,7 +210,7 @@ describe('Core Functions / Schema', () => {
       ]);
     });
 
-    it('errors with subtly invalid input', async () => {
+    it.concurrent('errors with subtly invalid input', async () => {
       const input = ['1', '2'];
       expect(await runSchema(input, { schema })).toEqual([
         {
@@ -237,7 +237,7 @@ describe('Core Functions / Schema', () => {
       },
     };
 
-    it('reports correct paths', async () => {
+    it.concurrent('reports correct paths', async () => {
       expect(
         await runSchema(
           {
@@ -280,7 +280,7 @@ describe('Core Functions / Schema', () => {
       format: 'email',
     };
 
-    it('errors for not emails', async () => {
+    it.concurrent('errors for not emails', async () => {
       const input = 'not an email';
       expect(await runSchema(input, { schema })).toEqual([
         {
@@ -290,7 +290,7 @@ describe('Core Functions / Schema', () => {
       ]);
     });
 
-    it('considers emails valid', async () => {
+    it.concurrent('considers emails valid', async () => {
       const input = 'email@example.com';
       expect(await runSchema(input, { schema })).toEqual([]);
     });
@@ -302,12 +302,12 @@ describe('Core Functions / Schema', () => {
       format: 'int32',
     };
 
-    it('accepts a number of any format', async () => {
+    it.concurrent('accepts a number of any format', async () => {
       const input = 123;
       expect(await runSchema(input, { schema })).toEqual([]);
     });
 
-    it.each([
+    it.concurrent.each([
       ['byte', '3'],
       ['int32', 2 ** 40],
     ])('reports invalid usage of %s format', async (format, input) => {
@@ -326,7 +326,7 @@ describe('Core Functions / Schema', () => {
       ]);
     });
 
-    it.each([
+    it.concurrent.each([
       ['byte', 'MIT3'],
       ['int32', 2 ** 30],
       ['int64', 2 ** 40],
@@ -350,7 +350,7 @@ describe('Core Functions / Schema', () => {
         enum: ['foo', 'bar'],
       };
 
-      it('reports pretty enum errors for a string', async () => {
+      it.concurrent('reports pretty enum errors for a string', async () => {
         expect(await runSchema('baz', { schema })).toEqual([
           {
             message: 'String must be equal to one of the allowed values: "foo", "bar". Did you mean "bar"?',
@@ -359,7 +359,7 @@ describe('Core Functions / Schema', () => {
         ]);
       });
 
-      it('reports pretty enum errors for a number', async () => {
+      it.concurrent('reports pretty enum errors for a number', async () => {
         expect(await runSchema(2, { schema })).toEqual([
           {
             message: 'Value type must be string',
@@ -376,7 +376,7 @@ describe('Core Functions / Schema', () => {
         enum: [1, 3, 5, 10, 12],
       };
 
-      it('reports pretty enum errors for a string', async () => {
+      it.concurrent('reports pretty enum errors for a string', async () => {
         expect(await runSchema('baz', { schema })).toEqual([
           {
             message: 'Value type must be integer',
@@ -385,7 +385,7 @@ describe('Core Functions / Schema', () => {
         ]);
       });
 
-      it('reports pretty enum errors for a number', async () => {
+      it.concurrent('reports pretty enum errors for a number', async () => {
         expect(await runSchema(2, { schema })).toEqual([
           {
             message: `Number must be equal to one of the allowed values: 1, 3, 5, 10, 12`,
@@ -401,7 +401,7 @@ describe('Core Functions / Schema', () => {
         enum: [1, null],
       };
 
-      it('reports pretty enum errors for a string', async () => {
+      it.concurrent('reports pretty enum errors for a string', async () => {
         expect(await runSchema('baz', { schema })).toEqual([
           {
             message: `String must be equal to one of the allowed values: 1, null`,
@@ -410,7 +410,7 @@ describe('Core Functions / Schema', () => {
         ]);
       });
 
-      it('reports pretty enum errors for a number', async () => {
+      it.concurrent('reports pretty enum errors for a number', async () => {
         expect(await runSchema(2, { schema })).toEqual([
           {
             message: `Number must be equal to one of the allowed values: 1, null`,
@@ -421,22 +421,25 @@ describe('Core Functions / Schema', () => {
     });
   });
 
-  it('reports slightly less pretty enum errors for primitive values that are not similar to any values in enum', async () => {
-    const schema: JSONSchema = {
-      $schema: `http://json-schema.org/draft-07/schema#`,
-      type: 'string',
-      enum: ['foo', 'bar'],
-    };
+  it.concurrent(
+    'reports slightly less pretty enum errors for primitive values that are not similar to any values in enum',
+    async () => {
+      const schema: JSONSchema = {
+        $schema: `http://json-schema.org/draft-07/schema#`,
+        type: 'string',
+        enum: ['foo', 'bar'],
+      };
 
-    expect(await runSchema('three', { schema })).toEqual([
-      {
-        message: 'String must be equal to one of the allowed values: "foo", "bar"',
-        path: [],
-      },
-    ]);
-  });
+      expect(await runSchema('three', { schema })).toEqual([
+        {
+          message: 'String must be equal to one of the allowed values: "foo", "bar"',
+          path: [],
+        },
+      ]);
+    },
+  );
 
-  it('pretty-prints path-less property', async () => {
+  it.concurrent('pretty-prints path-less property', async () => {
     const input = { foo: true };
     expect(await runSchema(input, { schema: { additionalProperties: false } })).toEqual([
       {
@@ -447,7 +450,7 @@ describe('Core Functions / Schema', () => {
   });
 
   describe('when schema has a $ref left', () => {
-    it('given unresolved context, reports an error', async () => {
+    it.concurrent('given unresolved context, reports an error', async () => {
       expect(await runSchema({}, { schema: { $ref: '#/foo' } }, { resolved: false })).toEqual([
         {
           message: "can't resolve reference #/foo from id #",
@@ -456,13 +459,13 @@ describe('Core Functions / Schema', () => {
       ]);
     });
 
-    it('given resolved context, ignores', async () => {
+    it.concurrent('given resolved context, ignores', async () => {
       expect(await runSchema({}, { schema: { $ref: '#/bar' } }, { resolved: true })).toEqual([]);
     });
   });
 
   describe('validation', () => {
-    it.each([
+    it.concurrent.each([
       { schema: { type: 'object' } },
       { schema: { type: 'string' }, dialect: 'auto' },
       { schema: { type: 'string' }, allErrors: true },
@@ -478,7 +481,7 @@ describe('Core Functions / Schema', () => {
       expect(await runSchema('', opts)).toBeInstanceOf(Array);
     });
 
-    it.each<[unknown, RulesetValidationError[]]>([
+    it.concurrent.each<[unknown, RulesetValidationError[]]>([
       [
         2,
         [

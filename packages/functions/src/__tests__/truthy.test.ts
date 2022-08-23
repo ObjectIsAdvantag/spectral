@@ -8,11 +8,11 @@ import AggregateError = require('es-aggregate-error');
 const runTruthy = testFunction.bind(null, truthy);
 
 describe('Core Functions / Truthy', () => {
-  it.each([true, 1, [], {}])('given truthy %p input, should return no error message', async input => {
+  it.concurrent.each([true, 1, [], {}])('given truthy %p input, should return no error message', async input => {
     expect(await runTruthy(input)).toEqual([]);
   });
 
-  it.each([false, null, 0, ''])('given falsy %p input, should return an error message', async input => {
+  it.concurrent.each([false, null, 0, ''])('given falsy %p input, should return an error message', async input => {
     expect(await runTruthy(input)).toEqual([
       {
         message: 'The document must be truthy',
@@ -22,7 +22,7 @@ describe('Core Functions / Truthy', () => {
   });
 
   describe('validation', () => {
-    it.each([{}, 2])('given invalid %p options, should throw', async opts => {
+    it.concurrent.each([{}, 2])('given invalid %p options, should throw', async opts => {
       await expect(runTruthy([], opts)).rejects.toThrowAggregateError(
         new AggregateError([new RulesetValidationError('"truthy" function does not accept any options', [])]),
       );

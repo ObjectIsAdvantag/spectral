@@ -7,12 +7,12 @@ import AggregateError = require('es-aggregate-error');
 const runCasing = testFunction.bind(null, casing);
 
 describe('Core Functions / Casing', () => {
-  it('given non-string input, should return no error message', async () => {
+  it.concurrent('given non-string input, should return no error message', async () => {
     expect(await runCasing(false, { type: CasingType.camel })).toEqual([]);
     expect(await runCasing(1, { type: CasingType.camel })).toEqual([]);
   });
 
-  it('given empty string input, should return no error message', async () => {
+  it.concurrent('given empty string input, should return no error message', async () => {
     expect(await runCasing('', { type: CasingType.camel })).toEqual([]);
   });
 
@@ -22,22 +22,25 @@ describe('Core Functions / Casing', () => {
       const valid = ['foo', 'foobar'];
       const validWithDigits = ['foo9bar', 'foo24baz', 'foo1'];
 
-      it.each(invalid)('should recognize invalid input %p', async input => {
+      it.concurrent.each(invalid)('should recognize invalid input %p', async input => {
         expect(await runCasing(input, { type: CasingType.flat })).toEqual([{ message: 'must be flat case', path: [] }]);
       });
 
-      it.each([...valid, ...validWithDigits])('given valid %p input, should return no error message', async input => {
-        expect(await runCasing(input, { type: CasingType.flat })).toEqual([]);
-      });
+      it.concurrent.each([...valid, ...validWithDigits])(
+        'given valid %p input, should return no error message',
+        async input => {
+          expect(await runCasing(input, { type: CasingType.flat })).toEqual([]);
+        },
+      );
 
       describe('when digits are disallowed', () => {
-        it.each([...invalid, ...validWithDigits])('should recognize invalid input %s', async input => {
+        it.concurrent.each([...invalid, ...validWithDigits])('should recognize invalid input %s', async input => {
           expect(await runCasing(input, { type: CasingType.flat, disallowDigits: true })).toEqual([
             { message: 'must be flat case', path: [] },
           ]);
         });
 
-        it.each(valid)('given valid %p input, should return no error message', async input => {
+        it.concurrent.each(valid)('given valid %p input, should return no error message', async input => {
           expect(await runCasing(input, { type: CasingType.flat, disallowDigits: true })).toEqual([]);
         });
       });
@@ -48,18 +51,21 @@ describe('Core Functions / Casing', () => {
       const valid = ['foo', 'fooBar', 'fooBarBaz', 'coordinateX'];
       const validWithDigits = ['foo1', 'foo24Bar', 'fooBar0Baz323'];
 
-      it.each(invalid)('given invalid %p input, should return an error message', async input => {
+      it.concurrent.each(invalid)('given invalid %p input, should return an error message', async input => {
         expect(await runCasing(input, { type: CasingType.camel })).toEqual([
           { message: 'must be camel case', path: [] },
         ]);
       });
 
-      it.each([valid, ...validWithDigits])('given valid %p input, should return no error message', async input => {
-        expect(await runCasing(input, { type: CasingType.camel })).toEqual([]);
-      });
+      it.concurrent.each([valid, ...validWithDigits])(
+        'given valid %p input, should return no error message',
+        async input => {
+          expect(await runCasing(input, { type: CasingType.camel })).toEqual([]);
+        },
+      );
 
       describe('when digits are disallowed', () => {
-        it.each([...invalid, ...validWithDigits])(
+        it.concurrent.each([...invalid, ...validWithDigits])(
           'given invalid %p input, should return an error message',
           async input => {
             expect(await runCasing(input, { type: CasingType.camel, disallowDigits: true })).toEqual([
@@ -68,7 +74,7 @@ describe('Core Functions / Casing', () => {
           },
         );
 
-        it.each(valid)('given valid %p input, should return no error message', async input => {
+        it.concurrent.each(valid)('given valid %p input, should return no error message', async input => {
           expect(await runCasing(input, { type: CasingType.camel, disallowDigits: true })).toEqual([]);
         });
       });
@@ -79,18 +85,21 @@ describe('Core Functions / Casing', () => {
       const valid = ['Foo', 'FooBar', 'FooBarBaz', 'CoordinateZ'];
       const validWithDigits = ['Foo1', 'FooBarBaz1'];
 
-      it.each(invalid)('given invalid %p input, should return an error message', async input => {
+      it.concurrent.each(invalid)('given invalid %p input, should return an error message', async input => {
         expect(await runCasing(input, { type: CasingType.pascal })).toEqual([
           { message: 'must be pascal case', path: [] },
         ]);
       });
 
-      it.each([valid, ...validWithDigits])('given valid %p input, should return no error message', async input => {
-        expect(await runCasing(input, { type: CasingType.pascal })).toEqual([]);
-      });
+      it.concurrent.each([valid, ...validWithDigits])(
+        'given valid %p input, should return no error message',
+        async input => {
+          expect(await runCasing(input, { type: CasingType.pascal })).toEqual([]);
+        },
+      );
 
       describe('when digits are disallowed', () => {
-        it.each([...invalid, ...validWithDigits])(
+        it.concurrent.each([...invalid, ...validWithDigits])(
           'given invalid %p input, should return an error message',
           async input => {
             expect(await runCasing(input, { type: CasingType.pascal, disallowDigits: true })).toEqual([
@@ -99,7 +108,7 @@ describe('Core Functions / Casing', () => {
           },
         );
 
-        it.each(valid)('given valid %p input, should return no error message', async input => {
+        it.concurrent.each(valid)('given valid %p input, should return no error message', async input => {
           expect(await runCasing(input, { type: CasingType.pascal, disallowDigits: true })).toEqual([]);
         });
       });
@@ -123,18 +132,21 @@ describe('Core Functions / Casing', () => {
       const valid = ['foo', 'foo-bar', 'foo-bar-baz'];
       const validWithDigits = ['foo-bar1', 'foo1-2bar'];
 
-      it.each(invalid)('given invalid %p input, should return an error message', async input => {
+      it.concurrent.each(invalid)('given invalid %p input, should return an error message', async input => {
         expect(await runCasing(input, { type: CasingType.kebab })).toEqual([
           { message: 'must be kebab case', path: [] },
         ]);
       });
 
-      it.each([...valid, ...validWithDigits])('given valid %p input, should return no error message', async input => {
-        expect(await runCasing(input, { type: CasingType.kebab })).toEqual([]);
-      });
+      it.concurrent.each([...valid, ...validWithDigits])(
+        'given valid %p input, should return no error message',
+        async input => {
+          expect(await runCasing(input, { type: CasingType.kebab })).toEqual([]);
+        },
+      );
 
       describe('when digits are disallowed', () => {
-        it.each([...invalid, ...validWithDigits])(
+        it.concurrent.each([...invalid, ...validWithDigits])(
           'given invalid %p input, should return an error message',
           async input => {
             expect(await runCasing(input, { type: CasingType.kebab, disallowDigits: true })).toEqual([
@@ -143,7 +155,7 @@ describe('Core Functions / Casing', () => {
           },
         );
 
-        it.each(valid)('given valid %p input, should return no error message', async input => {
+        it.concurrent.each(valid)('given valid %p input, should return no error message', async input => {
           expect(await runCasing(input, { type: CasingType.kebab, disallowDigits: true })).toEqual([]);
         });
       });
@@ -154,18 +166,21 @@ describe('Core Functions / Casing', () => {
       const valid = ['FOO', 'FOO-BAR', 'FOO-BAR-BAZ'];
       const validWithDigits = ['FOO-BAR1', 'FOO2-3BAR1'];
 
-      it.each(invalid)('given invalid %p input, should return an error message', async input => {
+      it.concurrent.each(invalid)('given invalid %p input, should return an error message', async input => {
         expect(await runCasing(input, { type: CasingType.cobol })).toEqual([
           { message: 'must be cobol case', path: [] },
         ]);
       });
 
-      it.each([...valid, ...validWithDigits])('given valid %p input, should return no error message', async input => {
-        expect(await runCasing(input, { type: CasingType.cobol })).toEqual([]);
-      });
+      it.concurrent.each([...valid, ...validWithDigits])(
+        'given valid %p input, should return no error message',
+        async input => {
+          expect(await runCasing(input, { type: CasingType.cobol })).toEqual([]);
+        },
+      );
 
       describe('when digits are disallowed', () => {
-        it.each([...invalid, ...validWithDigits])(
+        it.concurrent.each([...invalid, ...validWithDigits])(
           'given invalid %p input, should return an error message',
           async input => {
             expect(await runCasing(input, { type: CasingType.cobol, disallowDigits: true })).toEqual([
@@ -174,7 +189,7 @@ describe('Core Functions / Casing', () => {
           },
         );
 
-        it.each(valid)('given valid %p input, should return no error message', async input => {
+        it.concurrent.each(valid)('given valid %p input, should return no error message', async input => {
           expect(await runCasing(input, { type: CasingType.cobol, disallowDigits: true })).toEqual([]);
         });
       });
@@ -185,18 +200,21 @@ describe('Core Functions / Casing', () => {
       const valid = ['foo', 'foo_bar', 'foo_bar_baz'];
       const validWithDigits = ['foo_bar1', 'foo2_4bar1'];
 
-      it.each(invalid)('given invalid %p input, should return an error message', async input => {
+      it.concurrent.each(invalid)('given invalid %p input, should return an error message', async input => {
         expect(await runCasing(input, { type: CasingType.snake })).toEqual([
           { message: 'must be snake case', path: [] },
         ]);
       });
 
-      it.each([...valid, ...validWithDigits])('given valid %p input, should return no error message', async input => {
-        expect(await runCasing(input, { type: CasingType.snake })).toEqual([]);
-      });
+      it.concurrent.each([...valid, ...validWithDigits])(
+        'given valid %p input, should return no error message',
+        async input => {
+          expect(await runCasing(input, { type: CasingType.snake })).toEqual([]);
+        },
+      );
 
       describe('when digits are disallowed', () => {
-        it.each([...invalid, ...validWithDigits])(
+        it.concurrent.each([...invalid, ...validWithDigits])(
           'given invalid %p input, should return an error message',
           async input => {
             expect(await runCasing(input, { type: CasingType.snake, disallowDigits: true })).toEqual([
@@ -205,7 +223,7 @@ describe('Core Functions / Casing', () => {
           },
         );
 
-        it.each(valid)('given valid %p input, should return no error message', async input => {
+        it.concurrent.each(valid)('given valid %p input, should return no error message', async input => {
           expect(await runCasing(input, { type: CasingType.snake, disallowDigits: true })).toEqual([]);
         });
       });
@@ -228,18 +246,21 @@ describe('Core Functions / Casing', () => {
       const valid = ['FOO', 'FOO_BAR', 'FOO_BAR_BAZ'];
       const validWithDigits = ['FOO_BAR1', 'FOO2_4BAR1', 'FOO2_4_2'];
 
-      it.each(invalid)('given invalid %p input, should return an error message', async input => {
+      it.concurrent.each(invalid)('given invalid %p input, should return an error message', async input => {
         expect(await runCasing(input, { type: CasingType.macro })).toEqual([
           { message: 'must be macro case', path: [] },
         ]);
       });
 
-      it.each([...valid, ...validWithDigits])('given valid %p input, should return no error message', async input => {
-        expect(await runCasing(input, { type: CasingType.macro })).toEqual([]);
-      });
+      it.concurrent.each([...valid, ...validWithDigits])(
+        'given valid %p input, should return no error message',
+        async input => {
+          expect(await runCasing(input, { type: CasingType.macro })).toEqual([]);
+        },
+      );
 
       describe('when digits are disallowed', () => {
-        it.each([...invalid, ...validWithDigits])(
+        it.concurrent.each([...invalid, ...validWithDigits])(
           'given invalid %p input, should return an error message',
           async input => {
             expect(await runCasing(input, { type: CasingType.macro, disallowDigits: true })).toEqual([
@@ -248,7 +269,7 @@ describe('Core Functions / Casing', () => {
           },
         );
 
-        it.each(valid)('given valid %p input, should return no error message', async input => {
+        it.concurrent.each(valid)('given valid %p input, should return no error message', async input => {
           expect(await runCasing(input, { type: CasingType.macro, disallowDigits: true })).toEqual([]);
         });
       });
@@ -270,7 +291,7 @@ describe('Core Functions / Casing', () => {
     );
 
     describe('properly detects valid cases', () => {
-      it.each(testCases)(
+      it.concurrent.each(testCases)(
         'with type "%s", disallowDigits: %s, separator: "%s", allowLeadingSeparator: %s',
         async (type, disallowDigits, char, allowLeading, simple, withDigits, invalid) => {
           expect(
@@ -328,7 +349,7 @@ describe('Core Functions / Casing', () => {
       );
     });
 
-    it.each(Object.values(CasingType))('properly detects leading char for %s casing', async type => {
+    it.concurrent.each(Object.values(CasingType))('properly detects leading char for %s casing', async type => {
       const opts = {
         type,
         disallowDigits: true,
@@ -341,7 +362,7 @@ describe('Core Functions / Casing', () => {
       expect(await runCasing('//', opts)).toEqual([{ message: `must be ${type} case`, path: [] }]);
     });
 
-    it('allows advanced scenarios', async () => {
+    it.concurrent('allows advanced scenarios', async () => {
       expect(
         await runCasing('X-MyAmazing-Header', {
           type: CasingType.pascal,
@@ -365,7 +386,7 @@ describe('Core Functions / Casing', () => {
   });
 
   describe('validation', () => {
-    it.each([
+    it.concurrent.each([
       { type: 'cobol' },
       { type: 'macro', disallowDigits: true },
       { type: 'snake', disallowDigits: true, separator: { char: 'a' } },
@@ -374,7 +395,7 @@ describe('Core Functions / Casing', () => {
       await expect(runCasing('foo', opts)).resolves.toBeInstanceOf(Array);
     });
 
-    it.each<[unknown, RulesetValidationError[]]>([
+    it.concurrent.each<[unknown, RulesetValidationError[]]>([
       [
         { type: 'foo' },
         [

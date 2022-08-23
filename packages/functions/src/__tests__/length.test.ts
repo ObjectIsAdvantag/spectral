@@ -18,7 +18,7 @@ describe('Core Functions / Length', () => {
     },
   ];
 
-  it.each(values)(
+  it.concurrent.each(values)(
     'given a string, number, array, or object greater than max, should return an error message',
     async input => {
       expect(await runLength(input, { max: 2 })).toEqual([
@@ -30,7 +30,7 @@ describe('Core Functions / Length', () => {
     },
   );
 
-  it.each(values)(
+  it.concurrent.each(values)(
     'given a string, number, array, or object smaller than min, should return an error message',
     async input => {
       expect(await runLength(input, { min: 4 })).toEqual([
@@ -42,7 +42,7 @@ describe('Core Functions / Length', () => {
     },
   );
 
-  it.each(values)(
+  it.concurrent.each(values)(
     'given string, number, array, or object in between min and max, should return no error message',
     async input => {
       expect(await runLength(input, { min: 3, max: 3 })).toEqual([]);
@@ -50,11 +50,14 @@ describe('Core Functions / Length', () => {
   );
 
   describe('validation', () => {
-    it.each([{ min: 2 }, { max: 4 }, { min: 2, max: 4 }])('given valid %p options, should not throw', async opts => {
-      expect(await runLength('foo', opts)).toEqual([]);
-    });
+    it.concurrent.each([{ min: 2 }, { max: 4 }, { min: 2, max: 4 }])(
+      'given valid %p options, should not throw',
+      async opts => {
+        expect(await runLength('foo', opts)).toEqual([]);
+      },
+    );
 
-    it.each<[unknown, RulesetValidationError[]]>([
+    it.concurrent.each<[unknown, RulesetValidationError[]]>([
       [
         null,
         [
