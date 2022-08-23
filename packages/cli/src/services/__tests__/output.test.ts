@@ -16,7 +16,7 @@ jest.mock('process');
 
 describe('Output service', () => {
   describe('formatOutput', () => {
-    it.each(['stylish', 'json', 'junit'])('calls %s formatter with given result', format => {
+    it.concurrent.each(['stylish', 'json', 'junit'])('calls %s formatter with given result', format => {
       const results = [
         {
           code: 'info-contact',
@@ -44,14 +44,14 @@ describe('Output service', () => {
   });
 
   describe('writeOutput', () => {
-    it('given outputFile, writes output to a specified path', async () => {
+    it.concurrent('given outputFile, writes output to a specified path', async () => {
       const output = '{}';
       const outputFile = 'foo.json';
       expect(await writeOutput(output, outputFile)).toBeUndefined();
       expect(fs.promises.writeFile).toBeCalledWith(outputFile, output);
     });
 
-    it('given <stdout>, print output to console', async () => {
+    it.concurrent('given <stdout>, print output to console', async () => {
       const output = '{}';
       expect(await writeOutput(output, '<stdout>')).toBeUndefined();
       expect(process.stdout.write).toBeCalledWith(output);
