@@ -11,7 +11,7 @@ import type { Format } from '@stoplight/spectral-core';
 
 describe('JSON Schema format', () => {
   describe('JSON Schema strict', () => {
-    it.each([
+    it.concurrent.each([
       'http://json-schema.org/schema#',
       'https://json-schema.org/schema#',
       'http://json-schema.org/hyper-schema#',
@@ -23,7 +23,7 @@ describe('JSON Schema format', () => {
       expect(jsonSchema({ $schema }, null)).toBe(true);
     });
 
-    it('does not recognize invalid document', () => {
+    it.concurrent('does not recognize invalid document', () => {
       expect(jsonSchema({ $schema: '2.0' }, null)).toBe(false);
       expect(jsonSchema({ $schema: 'json-schema' }, null)).toBe(false);
       expect(jsonSchema({ $schema: 2 }, null)).toBe(false);
@@ -37,7 +37,7 @@ describe('JSON Schema format', () => {
 
   describe('JSON Schema loose', () => {
     describe('by $schema', () => {
-      it.each([
+      it.concurrent.each([
         'http://json-schema.org/schema#',
         'https://json-schema.org/schema#',
         'http://json-schema.org/hyper-schema#',
@@ -51,24 +51,24 @@ describe('JSON Schema format', () => {
     });
 
     describe('by type', () => {
-      it.each(['array', 'boolean', 'integer', 'null', 'number', 'object', 'string'])(
+      it.concurrent.each(['array', 'boolean', 'integer', 'null', 'number', 'object', 'string'])(
         'recognizes %s type correctly',
         type => {
           expect(jsonSchemaLoose({ type }, null)).toBe(true);
         },
       );
 
-      it.each(['foo', 'bar', 1, 2, void 0, null])('does not recognize invalid %s type', type => {
+      it.concurrent.each(['foo', 'bar', 1, 2, void 0, null])('does not recognize invalid %s type', type => {
         expect(jsonSchemaLoose({ type }, null)).toBe(false);
       });
     });
 
     describe('by combiner', () => {
-      it.each(['allOf', 'oneOf', 'anyOf'])('recognizes %s combiner correctly', combiner => {
+      it.concurrent.each(['allOf', 'oneOf', 'anyOf'])('recognizes %s combiner correctly', combiner => {
         expect(jsonSchemaLoose({ [combiner]: [] }, null)).toBe(true);
       });
 
-      it.each(['allOf', 'oneOf', 'anyOf'])('does not %s combiner that is not an object', combiner => {
+      it.concurrent.each(['allOf', 'oneOf', 'anyOf'])('does not %s combiner that is not an object', combiner => {
         expect(jsonSchemaLoose({ [combiner]: void 0 }, null)).toBe(false);
         expect(jsonSchemaLoose({ [combiner]: 0 }, null)).toBe(false);
         expect(jsonSchemaLoose({ [combiner]: '' }, null)).toBe(false);
@@ -76,23 +76,23 @@ describe('JSON Schema format', () => {
       });
     });
 
-    it('recognizes by the presence of "not"', () => {
+    it.concurrent('recognizes by the presence of "not"', () => {
       expect(jsonSchemaLoose({ not: {} }, null)).toBe(true);
     });
 
     describe('mixed', () => {
-      it('invalid type but valid combiner', () => {
+      it.concurrent('invalid type but valid combiner', () => {
         expect(jsonSchemaLoose({ type: 'foo', allOf: [] }, null)).toBe(true);
       });
 
-      it('valid type but invalid combiner', () => {
+      it.concurrent('valid type but invalid combiner', () => {
         expect(jsonSchemaLoose({ type: 'string', allOf: null }, null)).toBe(true);
       });
     });
   });
 
   describe('JSON Schema Draft 4', () => {
-    it.each([
+    it.concurrent.each([
       'http://json-schema.org/draft-04/schema#',
       'https://json-schema.org/draft-04/schema#',
       'http://json-schema.org/draft-04/schema',
@@ -105,7 +105,7 @@ describe('JSON Schema format', () => {
       expect(jsonSchemaDraft4({ $schema }, null)).toBe(true);
     });
 
-    it.each([
+    it.concurrent.each([
       'http://json-schema.org/schema#',
       'https://json-schema.org/schema#',
       'http://json-schema.org/hyper-schema#',
@@ -115,7 +115,7 @@ describe('JSON Schema format', () => {
       expect(jsonSchemaDraft4({ $schema }, null)).toBe(false);
     });
 
-    it('does not recognize invalid document', () => {
+    it.concurrent('does not recognize invalid document', () => {
       expect(jsonSchemaDraft4({ $schema: '2.0' }, null)).toBe(false);
       expect(jsonSchemaDraft4({ $schema: 'json-schema' }, null)).toBe(false);
       expect(jsonSchemaDraft4({ $schema: 2 }, null)).toBe(false);
@@ -127,7 +127,7 @@ describe('JSON Schema format', () => {
     });
   });
   describe('JSON Schema Draft 6', () => {
-    it.each([
+    it.concurrent.each([
       'http://json-schema.org/draft-06/schema#',
       'https://json-schema.org/draft-06/schema#',
       'http://json-schema.org/draft-06/schema',
@@ -140,7 +140,7 @@ describe('JSON Schema format', () => {
       expect(jsonSchemaDraft6({ $schema }, null)).toBe(true);
     });
 
-    it.each([
+    it.concurrent.each([
       'http://json-schema.org/schema#',
       'https://json-schema.org/schema#',
       'http://json-schema.org/hyper-schema#',
@@ -150,7 +150,7 @@ describe('JSON Schema format', () => {
       expect(jsonSchemaDraft6({ $schema }, null)).toBe(false);
     });
 
-    it('does not recognize invalid document', () => {
+    it.concurrent('does not recognize invalid document', () => {
       expect(jsonSchemaDraft6({ $schema: '2.0' }, null)).toBe(false);
       expect(jsonSchemaDraft6({ $schema: 'json-schema' }, null)).toBe(false);
       expect(jsonSchemaDraft6({ $schema: 2 }, null)).toBe(false);
@@ -163,7 +163,7 @@ describe('JSON Schema format', () => {
   });
 
   describe('JSON Schema Draft 7', () => {
-    it.each([
+    it.concurrent.each([
       'http://json-schema.org/draft-07/schema#',
       'https://json-schema.org/draft-07/schema#',
       'http://json-schema.org/draft-07/schema',
@@ -176,7 +176,7 @@ describe('JSON Schema format', () => {
       expect(jsonSchemaDraft7({ $schema }, null)).toBe(true);
     });
 
-    it.each([
+    it.concurrent.each([
       'http://json-schema.org/schema#',
       'https://json-schema.org/schema#',
       'http://json-schema.org/hyper-schema#',
@@ -186,7 +186,7 @@ describe('JSON Schema format', () => {
       expect(jsonSchemaDraft7({ $schema }, null)).toBe(false);
     });
 
-    it('does not recognize invalid document', () => {
+    it.concurrent('does not recognize invalid document', () => {
       expect(jsonSchemaDraft7({ $schema: '2.0' }, null)).toBe(false);
       expect(jsonSchemaDraft7({ $schema: 'json-schema' }, null)).toBe(false);
       expect(jsonSchemaDraft7({ $schema: 2 }, null)).toBe(false);
@@ -202,7 +202,7 @@ describe('JSON Schema format', () => {
     ['2019-09', jsonSchemaDraft2019_09],
     ['2020-12', jsonSchemaDraft2020_12],
   ])('JSON Schema Draft %s', (draft, fn) => {
-    it.each([
+    it.concurrent.each([
       `http://json-schema.org/draft/${draft}/schema#`,
       `https://json-schema.org/draft/${draft}/schema#`,
       `http://json-schema.org/draft/${draft}/schema`,
@@ -215,7 +215,7 @@ describe('JSON Schema format', () => {
       expect(fn({ $schema }, null)).toBe(true);
     });
 
-    it.each([
+    it.concurrent.each([
       'http://json-schema.org/schema#',
       'https://json-schema.org/schema#',
       'http://json-schema.org/hyper-schema#',
@@ -225,7 +225,7 @@ describe('JSON Schema format', () => {
       expect(fn({ $schema }, null)).toBe(false);
     });
 
-    it('does not recognize invalid document', () => {
+    it.concurrent('does not recognize invalid document', () => {
       expect(fn({ $schema: '2.0' }, null)).toBe(false);
       expect(fn({ $schema: 'json-schema' }, null)).toBe(false);
       expect(fn({ $schema: 2 }, null)).toBe(false);
